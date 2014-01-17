@@ -1,0 +1,29 @@
+body {
+	margin: 0;
+}
+
+#info {
+	margin-left: 20px;
+	width: 400px;
+	float: left;
+	background-color: #f2f2f2;
+}
+
+#terminal {
+	width: 600px;
+	float: left;
+}
+
+#log {
+	min-height: 200px;
+}
+li {
+	list-style: none;
+}
+
+#input-container{
+
+}
+#input-container form input{
+	width: 600px;
+}

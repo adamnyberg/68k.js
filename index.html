@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="utf-8">
+	<title>68k Emulator</title>
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+	<script src="js/app/filters/toHex.js"></script>
+	<script src="js/app/app.js"></script>
+</head>
+<body ng-controller="m68k">
+	<div id="terminal">
+		<div id="log">
+			<li ng-repeat="log in logs">
+				{{log.text}}
+			</li>
+		</div>
+		<div id="input-container">
+			<form ng-submit="enterInput()">
+				<input id="termInput" type="text" ng-model="terminalInput" autofocus>
+			</form>
+		</div>
+	</div>
+	<div id="info">
+		<h2>Registers</h2>
+		<div>
+			<li ng-repeat="(key, register) in registers">
+				<p>{{key}}: <span>{{register|toHex}}</span></p>
+			</li>
+		</div>
+	</div>
+</body>
+</html>
