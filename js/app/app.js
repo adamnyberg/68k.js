@@ -28,50 +28,22 @@
 
     $scope.enterInput = function() {
       $scope.logs.push({text: $scope.terminalInput});
-      parseInput($scope.terminalInput);
-      $scope.terminalInput = '';
-    }
-
-
-    var parseInput = function (input) {
 
       try {
-        //MOVE
-        if (input.substr(0, 4).toLowerCase() === 'move') {
-          move(input.substr(5));
-
-        // AND
-        } else if (input.substr(0, 3).toLowerCase() === 'and') {
-          and(input.substr(4));
-
-        // OR
-        } else if (input.substr(0, 2).toLowerCase() === 'or') {
-          or(input.substr(3));
-
-        // XOR
-        } else if (input.substr(0, 3).toLowerCase() === 'xor') {
-          xor(input.substr(4));
-
-        // LSL
-        } else if (input.substr(0, 3).toLowerCase() === 'lsl') {
-          lsl(input.substr(4));
-
-        //LSR
-        } else if (input.substr(0, 3).toLowerCase() === 'lsr') {
-          lsr(input.substr(4));
-        }
-
-      } catch (err) {
+        evaluate_instruction($scope.terminalInput);
+      }
+      catch (err) {
         $scope.logs.push({text: err.message});
       }
-      console.log(registers);
-    };
+
+      $scope.terminalInput = '';
+    }
 
     var getDestination = function(destination) {
       if (registers.hasOwnProperty(destination)) {
         return destination;
       }
-      throw new Error('Unvalid destination');
+      throw new Error('Invalid destination');
     };
 
     var getValue = function(value) {
@@ -85,55 +57,41 @@
       } else if (registers.hasOwnProperty(value)) {
         return registers[value];
       }
-      throw new Error('Unvalid source');
+      throw new Error('Invalid source');
     };
 
+    var evaluate_instruction = function (input) {
+      var instruction_pair = input.split(' ');
+      var operation = instruction_pair[0];
+      var operands = instruction_pair[1].split(',');
 
+      var source = operands[0];
+      var destination = getDestination(operands[1]);
 
-    /*
-     * Assembly instructions
-     */
-
-    var move = function(input) {
-      var source = input.split(',')[0];
-      var destination = getDestination(input.split(',')[1]);
-
-      registers[destination] = getValue(source);
+      operations[operation](source, destination);
+      //console.log(registers);
     };
 
-    var and = function(input) {
-      var source = input.split(',')[0];
-      var destination = getDestination(input.split(',')[1]);
-
-      registers[destination] = getValue(source) & getValue(destination);
-    };
-
-    var or = function(input) {
-      var source = input.split(',')[0];
-      var destination = getDestination(input.split(',')[1]);
-
-      registers[destination] = getValue(source) | getValue(destination);
-    };
-
-    var xor = function(input) {
-      var source = input.split(',')[0];
-      var destination = getDestination(input.split(',')[1]);
-
-      registers[destination] = getValue(source) ^ getValue(destination);
-    };
-
-    var lsl = function(input) {
-      var source = input.split(',')[0];
-      var destination = getDestination(input.split(',')[1]);
-
-      registers[destination] = getValue(source) ^ getValue(destination);
-    };
-
-    var lsr = function(input) {
-      var source = input.split(',')[0];
-      var destination = getDestination(input.split(',')[1]);
-
-      registers[destination] = getValue(source) ^ getValue(destination);
+    var operations = {
+      move: function(source, destination) {
+        registers[destination] = getValue(source);
+      },
+      and: function(source, destination) {
+        registers[destination] = getValue(source) & getValue(destination);
+      },
+      or: function(source, destination) {
+        registers[destination] = getValue(source) | getValue(destination);
+      },
+      xor: function(source, destination) {
+        registers[destination] = getValue(source) ^ getValue(destination);
+      },
+      // TODO: Check that << and >> really are LOGICAl shifts
+      lsl: function(source, destination) {
+        registers[destination] = getValue(source) >> getValue(destination);
+      },
+      lsr: function(source, destination) {
+        registers[destination] = getValue(source) << getValue(destination);
+      }
     };
   });
 })();
